@@ -41,22 +41,19 @@ const MarkedList = {
         return { email: item, search: false };
       }),
       search: null,
-      //activeEmails: [],
-      //activeIndex: null,
     };
   },
 
   computed: {
     match() {
-      this.emails.forEach((item) => {
+      return this.emails.map((item) => {
         if (this.search != '' && item.email.includes(this.search)) {
-          return (item.search = true);
+          return { email: item.email, search: true };
         }
-        return (item.search = false);
+        return { email: item.email, search: false };
       });
     },
   },
 };
 
 createApp(MarkedList).mount('#app');
-

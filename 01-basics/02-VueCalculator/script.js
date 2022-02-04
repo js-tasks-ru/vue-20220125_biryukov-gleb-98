@@ -7,26 +7,20 @@ const VueCalculator = {
       actionPicked: '',
       firstNumber: 0,
       secondNumber: 0,
-      result: 0,
     };
   },
   computed: {
     output() {
       switch (this.actionPicked) {
         case 'sum':
-          this.result = this.firstNumber + this.secondNumber;
-          break;
+          return this.firstNumber + this.secondNumber;
         case 'subtract':
-          this.result = this.firstNumber - this.secondNumber;
-          break;
+          return this.firstNumber - this.secondNumber;
         case 'multiply':
-          this.result = this.firstNumber * this.secondNumber;
-          break;
+          return this.firstNumber * this.secondNumber;
         case 'divide':
-          this.result = this.firstNumber / this.secondNumber;
-          break;
+          return this.firstNumber / this.secondNumber;
       }
-      return this.result;
     },
   },
 };

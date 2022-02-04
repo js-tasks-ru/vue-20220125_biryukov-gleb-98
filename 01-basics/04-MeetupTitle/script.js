@@ -18,19 +18,19 @@ const MeetupTitle = {
   data() {
     return {
       valueID: 0,
-      titleID: '',
+      meetupTitle: '',
     };
   },
   watch: {
     valueID(newID, oldID) {
-      if (newID != oldID) this.getTitle();
+      this.getTitle();
     },
   },
 
   methods: {
     getTitle() {
       fetchMeetupById(this.valueID).then((data) => {
-        return (this.titleID = data.title);
+        return (this.meetupTitle = data.title);
       });
     },
   },

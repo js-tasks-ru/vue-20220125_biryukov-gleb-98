@@ -17,7 +17,7 @@
           <input v-model="search" type="search" />
         </div>
         <ul>
-          <li v-for="( item, index ) in emails" :key="index" :class="{ marked: item.search}" >
+          <li v-for="( item, index ) in match" :key="index" :class="{ marked: item.search}" >
             {{ item.email }}
           </li>
         </ul>

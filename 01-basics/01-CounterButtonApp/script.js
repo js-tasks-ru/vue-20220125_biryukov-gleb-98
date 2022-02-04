@@ -9,7 +9,6 @@ const CounterButtonApp = {
 
   methods: {
     doCount(event) {
-      console.log(event.currentTarget);
       this.counter += 1;
     },
   },
