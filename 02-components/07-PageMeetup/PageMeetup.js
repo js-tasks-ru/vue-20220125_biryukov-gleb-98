@@ -37,9 +37,12 @@ export default defineComponent({
     };
   },
 
-  computed: {
-    valueId() {
-      return this.actualMeetup();
+  watch: {
+    meetupId: {
+      immediate: true,
+      handler(newId, oldId) {
+        return this.actualMeetup();
+      },
     },
   },
 
@@ -51,6 +54,7 @@ export default defineComponent({
         this.error = false;
         data = await fetchMeetupById(this.meetupId);
       } catch (e) {
+        console.log(e);
         this.error = e;
       } finally {
         this.loading = false;
@@ -65,7 +69,7 @@ export default defineComponent({
         <ui-alert>Загрузка...</ui-alert>
       </ui-container>
       <ui-container v-else-if="error">
-        <ui-alert>error</ui-alert>
+        <ui-alert>Test Error</ui-alert>
       </ui-container>
       <meetup-view v-else :meetup="meetup"/>
     </div>`,
