@@ -31,7 +31,7 @@ export default defineComponent({
 
   data() {
     return {
-      meetup: '',
+      meetup: null,
       loading: true,
       error: false,
     };
@@ -54,8 +54,7 @@ export default defineComponent({
         this.error = false;
         data = await fetchMeetupById(this.meetupId);
       } catch (e) {
-        console.log(e);
-        this.error = e;
+        this.error = e.message;
       } finally {
         this.loading = false;
       }
@@ -69,7 +68,7 @@ export default defineComponent({
         <ui-alert>Загрузка...</ui-alert>
       </ui-container>
       <ui-container v-else-if="error">
-        <ui-alert>Test Error</ui-alert>
+        <ui-alert>{{ error }}</ui-alert>
       </ui-container>
       <meetup-view v-else :meetup="meetup"/>
     </div>`,

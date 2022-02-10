@@ -21,18 +21,19 @@ export default defineComponent({
 
   computed: {
     convertDateTime() {
-      let options = {
-        year: 'numeric',
-        month: 'numeric',
-        day: 'numeric',
-      };
-      let datetime = this.convertDate().toLocaleDateString(navigator.language, options);
-      let data = [
-        new Date(datetime).getFullYear(),
-        this.addZeroz(new Date(datetime).getMonth() + 1),
-        this.addZeroz(new Date(datetime).getDate()),
-      ];
-      return data.join('-');
+      // let options = {
+      //   year: 'numeric',
+      //   month: 'numeric',
+      //   day: 'numeric',
+      // };
+      // let datetime = this.convertDate().toLocaleDateString(navigator.language, options);
+      // let data = [
+      //   new Date(datetime).getFullYear(),
+      //   this.addZeroz(new Date(datetime).getMonth() + 1),
+      //   this.addZeroz(new Date(datetime).getDate()),
+      // ];
+      // return data.join('-');
+      return new Date(this.date).toISOString().split('T')[0];
     },
 
     convertDataString() {
@@ -52,9 +53,9 @@ export default defineComponent({
       return new Date(ms);
     },
 
-    addZeroz(number) {
-      return ('0' + number).slice(-2);
-    },
+    // addZeroz(number) {
+    //   return ('0' + number).slice(-2);
+    // },
   },
 
   template: `
