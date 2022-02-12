@@ -40,7 +40,6 @@ export default defineComponent({
             <h3>Программа</h3>
             <!-- meetup agenda -->
             <meetup-agenda v-if="meetup.agenda.length" :agenda="meetup.agenda"/>
-            </template>
             <ui-alert v-else>Программа пока пуста...</ui-alert>
           </div>
           <div class="meetup__aside">

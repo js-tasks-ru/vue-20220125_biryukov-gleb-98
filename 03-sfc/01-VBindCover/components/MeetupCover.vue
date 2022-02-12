@@ -21,10 +21,11 @@ export default {
 
 <style scoped>
 .meetup-cover {
-  --url: v-bind('`url(${image})`');
+  /* --url: v-bind('`url(${image})`'); */
   background-size: cover;
   background-position: center;
-  background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), var(--url, --default-cover);
+  background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)),
+    v-bind('`image` ? `url("${image}")` : `var(--default-value)`');
   /* url('https://course-vue.javascript.ru/api/images/2') */
   /* background-image: var(--url); */
   /* background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), var(--default-cover); */

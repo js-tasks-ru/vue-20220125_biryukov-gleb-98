@@ -5,7 +5,7 @@ export default defineComponent({
   name: 'MeetupAgendaItem',
 
   props: {
-    'agenda-item': {
+    agendaItem: {
       type: Object,
     },
   },
