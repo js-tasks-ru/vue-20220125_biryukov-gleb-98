@@ -24,7 +24,7 @@ export default {
 
   computed: {
     showInline() {
-      return this.inline ? 'form-group_inline' : 'form-group';
+     return this.inline ? 'form-group form-group_inline' : 'form-group';
     },
   },
 };
