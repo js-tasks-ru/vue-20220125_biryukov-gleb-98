@@ -1,6 +1,7 @@
 <template>
   <div class="toasts">
-    <div class="toast toast_success">
+    <ui-toast v-if="message" :message="message" />
+    <!-- <div v-if:="success" class="toast toast_success">
       <ui-icon class="toast__icon" icon="check-circle" />
       <span>Success Toast Example</span>
     </div>
@@ -8,17 +9,29 @@
     <div class="toast toast_error">
       <ui-icon class="toast__icon" icon="alert-circle" />
       <span>Error Toast Example</span>
-    </div>
+    </div> -->
   </div>
 </template>
 
 <script>
-import UiIcon from './UiIcon';
-
+import UiToast from './UiToast';
 export default {
   name: 'TheToaster',
+  components: { UiToast },
+  data() {
+    return {
+      message: null,
+    };
+  },
 
-  components: { UiIcon },
+  methods: {
+    error(message) {
+      return (this.message = { message: message, class: 'toast_error', icon: 'alert-circle' });
+    },
+    success(message) {
+      return (this.message = { message: message, class: 'toast_success', icon: 'check-circle' });
+    },
+  },
 };
 </script>
 
