@@ -24,10 +24,10 @@
         <ui-icon :icon="option.icon ? option.icon : null" class="dropdown__icon" />
         {{ option.text }}
       </button>
-      <!-- <button class="dropdown__item dropdown__item_icon" role="option" type="button">
+      <button class="dropdown__item dropdown__item_icon" role="option" type="button">
         <ui-icon icon="tv" class="dropdown__icon" />
         Option 2
-      </button> -->
+      </button>
     </div>
   </div>
 </template>
