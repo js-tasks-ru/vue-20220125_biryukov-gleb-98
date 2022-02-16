@@ -1,6 +1,6 @@
 <template>
   <div class="toasts">
-    <ui-toast v-if="message" :message="message" />
+    <ui-toast :message="message" />
     <!-- <div v-if:="success" class="toast toast_success">
       <ui-icon class="toast__icon" icon="check-circle" />
       <span>Success Toast Example</span>
@@ -20,16 +20,24 @@ export default {
   components: { UiToast },
   data() {
     return {
-      message: null,
+      message: [],
     };
   },
 
   methods: {
     error(message) {
-      return (this.message = { message: message, class: 'toast_error', icon: 'alert-circle' });
+      this.message.push({ message: message, class: 'toast_error', icon: 'alert-circle' });
+      setTimeout(this.timer, 5000);
+      return this.message;
     },
     success(message) {
-      return (this.message = { message: message, class: 'toast_success', icon: 'check-circle' });
+      this.message.push({ message: message, class: 'toast_success', icon: 'check-circle' });
+      setTimeout(this.timer, 5000);
+      return this.message;
+    },
+
+    timer() {
+      return (this.message = this.message.slice(1, this.message.length));
     },
   },
 };

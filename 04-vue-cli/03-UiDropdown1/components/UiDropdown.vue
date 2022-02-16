@@ -1,32 +1,36 @@
 <template>
   <div class="dropdown" :class="{ dropdown_opened: activeDropdown }">
-    <button type="button" class="dropdown__toggle dropdown__toggle_icon" @click="toggleDropdown">
-      <template v-if="selectTitle !== null">
-        <ui-icon :icon="options[selectTitle].icon" class="dropdown__icon" />
-        <span>{{ options[selectTitle].text }}</span>
-      </template>
-      <template v-else>
+    <template v-if="selectTitle == null">
+      <button type="button" class="dropdown__toggle dropdown__toggle_icon" @click="toggleDropdown">
         <ui-icon icon="tv" class="dropdown__icon" />
         <span>{{ title }}</span>
-      </template>
-    </button>
+      </button>
+    </template>
+    <template v-else>
+      <button
+        type="button"
+        :class="selectTitle.icon ? 'dropdown__toggle_icon' : 'dropdown__item_icon'"
+        class="dropdown__toggle"
+        @click="toggleDropdown"
+      >
+        <ui-icon v-if="selectTitle.icon" :icon="selectTitle.icon" class="dropdown__icon" />
+        <span>{{ selectTitle.text }}</span>
+      </button>
+    </template>
 
-    <div class="dropdown__menu" role="listbox">
+    <div v-show="activeDropdown" class="dropdown__menu" role="listbox">
       <button
         v-for="(option, index) in options"
         :key="`${option.key}-${index}`"
-        class="dropdown__item dropdown__item_icon"
+        class="dropdown__item"
+        :class="option.icon ? 'dropdown__item_icon' : 'dropdown__toggle_icon'"
         role="option"
         type="button"
         :value="option.value"
         @click="select($event.target.value, index)"
       >
-        <ui-icon :icon="option.icon ? option.icon : null" class="dropdown__icon" />
+        <ui-icon v-if="option.icon" :icon="option.icon" class="dropdown__icon" />
         {{ option.text }}
-      </button>
-      <button class="dropdown__item dropdown__item_icon" role="option" type="button">
-        <ui-icon icon="tv" class="dropdown__icon" />
-        Option 2
       </button>
     </div>
   </div>
@@ -40,7 +44,18 @@ export default {
 
   components: { UiIcon },
 
-  props: ['options', 'modelvalue', 'title'],
+  props: {
+    options: {
+      type: Object,
+    },
+    modelValue: {
+      type: String,
+    },
+    title: {
+      type: String,
+    },
+  },
+
   emits: ['update:modelValue'],
 
   data() {
@@ -50,17 +65,27 @@ export default {
     };
   },
 
+  watch: {
+    modelValue() {
+      this.selectetOption();
+    },
+  },
+
   methods: {
     toggleDropdown() {
       return this.activeDropdown === false ? (this.activeDropdown = true) : (this.activeDropdown = false);
     },
 
-    select(value, index) {
-      console.log(value);
-      console.log(this.modelValue);
+    select(value) {
       this.activeDropdown = false;
-      this.selectTitle = index;
       this.$emit('update:modelValue', value);
+      this.selectetOption();
+    },
+
+    selectetOption() {
+      this.options.map((option) => {
+        if (option.value === this.modelValue) return (this.selectTitle = option);
+      });
     },
   },
 };

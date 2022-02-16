@@ -1,5 +1,5 @@
 <template>
-  <div v-for="(toast, index) in toast_list" :key="index" class="toast" :class="`${toast.class}`">
+  <div v-for="(toast, index) in message" :key="index" class="toast" :class="`${toast.class}`">
     <ui-icon class="toast__icon" :icon="toast.icon" />
     <span>{{ toast.message }}</span>
   </div>
@@ -14,36 +14,10 @@ export default {
   components: { UiIcon },
 
   props: ['message'],
-  data() {
-    return {
-      toast_list: [],
-    };
-  },
-
-  computed: {
-    updateList() {
-      return this.toast_list;
-    },
-  },
 
   watch: {
-    message: {
-      immediate: true,
-      handler() {
-        this.messageAdd();
-      },
-    },
-  },
-
-  methods: {
-    messageAdd() {
-      this.toast_list.push(this.message);
-      setTimeout(this.timer, 5000);
-      return this.toast_list;
-    },
-
-    timer() {
-      return (this.toast_list = this.toast_list.slice(1, this.toast_list.length));
+    message() {
+      return this.message;
     },
   },
 };
