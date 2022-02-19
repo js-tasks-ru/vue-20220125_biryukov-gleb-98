@@ -7,12 +7,7 @@
       </button>
     </template>
     <template v-else>
-      <button
-        type="button"
-        :class="selectTitle.icon ? 'dropdown__toggle_icon' : 'dropdown__item_icon'"
-        class="dropdown__toggle"
-        @click="toggleDropdown"
-      >
+      <button type="button" class="dropdown__toggle" :class="{ dropdown__toggle_icon: isIcon }" @click="toggleDropdown">
         <ui-icon v-if="selectTitle.icon" :icon="selectTitle.icon" class="dropdown__icon" />
         <span>{{ selectTitle.text }}</span>
       </button>
@@ -23,7 +18,7 @@
         v-for="(option, index) in options"
         :key="`${option.key}-${index}`"
         class="dropdown__item"
-        :class="option.icon ? 'dropdown__item_icon' : 'dropdown__toggle_icon'"
+        :class="{ dropdown__item_icon: isIcon }"
         role="option"
         type="button"
         :value="option.value"
@@ -61,13 +56,19 @@ export default {
   data() {
     return {
       activeDropdown: false,
+      isIcon: this.options.some((option) => {
+        return option.icon;
+      }),
       selectTitle: null,
     };
   },
 
   watch: {
-    modelValue() {
-      this.selectetOption();
+    modelValue: {
+      immediate: true,
+      handler() {
+        this.selectetOption();
+      },
     },
   },
 
