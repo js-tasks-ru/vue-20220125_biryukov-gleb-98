@@ -38,11 +38,13 @@ export default {
 
   methods: {
     handleSubmit(e) {
-      if (e.target.email.value) {
-        console.log(e.target.email.value);
-        this.$router.push({ name: 'loginForm', query: { form: e.target.email.value } });
+      if (this.$route.query.from == '/register') {
+        console.log(123, this.$route.query.from);
+        this.$router.push({ path: this.$route.query.from });
+        // this.$router.push({ name: 'loginForm', query: { from: this.$route.query.from } });
+      } else {
+        return this.$router.push({ name: 'index' });
       }
-      this.$router.push({ name: 'index' });
       // Требуется обработать сабмит формы
     },
   },

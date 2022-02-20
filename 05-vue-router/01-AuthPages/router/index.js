@@ -21,7 +21,7 @@ export const router = createRouter({
       // component: PageLogin,
     },
     {
-      path: '/login/:form',
+      path: '/login:(?from(\\w+)',
       name: 'loginForm',
       component: () => import('../components/UiFormGroup'),
     },

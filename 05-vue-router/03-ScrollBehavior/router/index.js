@@ -43,25 +43,12 @@ export const router = createRouter({
     },
   ],
   scrollBehavior(to, from, savedPosition) {
-    let position = {};
     if (to.hash) {
-      position = {
-        el: to.hash,
-      };
-      // const el = window.location.href.split('#')[1];
-      // if (el.length) {
-      //   document.getElementById(el).scrollIntoView({ behavior: 'smooth' });
-      // }
-      // https://stackoverflow.com/questions/54535838/scroll-behaviour-vuejs-not-working-properly
-      // return { el: to.hash };
+      return { el: to.hash };
     } else if (savedPosition) {
-      position = {
-        savedPosition,
-      };
-      // return savedPosition;
-    } else {
-      position = { left: 0, top: 0 };
-    }
-    return position;
+      return savedPosition;
+    } else if (to.meta.saveScrollPosition && from.meta.saveScrollPosition) {
+      return false;
+    } else return { left: 0, top: 0 };
   },
 });
