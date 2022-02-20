@@ -1,8 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import PageIndex from '../views/PageIndex.vue';
-import PageLogin from '../views/PageLogin.vue';
-import PageRegister from '../views/PageRegister.vue';
-import UiFormGroup from '../components/UiFormGroup';
+// import PageIndex from '../views/PageIndex.vue';
+// import PageLogin from '../views/PageLogin.vue';
+// import PageRegister from '../views/PageRegister.vue';
+// import UiFormGroup from '../components/UiFormGroup';
 
 export const router = createRouter({
   history: createWebHistory('/05-vue-router/01-AuthPages'),
@@ -10,27 +10,25 @@ export const router = createRouter({
     {
       path: '/',
       name: 'index',
-      component: () => import('../views/PageIndex.vue'),
+      component: () => import('../views/PageIndex'),
       // component: PageIndex,
     },
 
     {
       path: '/login',
       name: 'login',
-      component: () => import('../views/PageLogin.vue'),
+      component: () => import('../views/PageLogin'),
       // component: PageLogin,
-      // redirect: { path: '/login/:form' },
     },
     {
       path: '/login/:form',
       name: 'loginForm',
-      component: UiFormGroup,
-      // redirect: { name: 'login' },
+      component: () => import('../components/UiFormGroup'),
     },
     {
       path: '/register',
       name: 'register',
-      component: () => import('../views/PageRegister.vue'),
+      component: () => import('../views/PageRegister'),
       // component: PageRegister,
     },
   ],

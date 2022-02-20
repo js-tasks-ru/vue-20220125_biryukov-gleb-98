@@ -38,7 +38,8 @@ export default {
 
   methods: {
     handleSubmit(e) {
-      if (e.target.email?.value !== undefined) {
+      if (e.target.email.value) {
+        console.log(e.target.email.value);
         this.$router.push({ name: 'loginForm', query: { form: e.target.email.value } });
       }
       this.$router.push({ name: 'index' });

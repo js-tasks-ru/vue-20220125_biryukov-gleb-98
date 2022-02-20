@@ -1,3 +1,4 @@
+import { el } from 'date-fns/locale';
 import { createRouter, createWebHistory } from 'vue-router';
 
 export const router = createRouter({
@@ -41,4 +42,26 @@ export const router = createRouter({
       ],
     },
   ],
+  scrollBehavior(to, from, savedPosition) {
+    let position = {};
+    if (to.hash) {
+      position = {
+        el: to.hash,
+      };
+      // const el = window.location.href.split('#')[1];
+      // if (el.length) {
+      //   document.getElementById(el).scrollIntoView({ behavior: 'smooth' });
+      // }
+      // https://stackoverflow.com/questions/54535838/scroll-behaviour-vuejs-not-working-properly
+      // return { el: to.hash };
+    } else if (savedPosition) {
+      position = {
+        savedPosition,
+      };
+      // return savedPosition;
+    } else {
+      position = { left: 0, top: 0 };
+    }
+    return position;
+  },
 });
