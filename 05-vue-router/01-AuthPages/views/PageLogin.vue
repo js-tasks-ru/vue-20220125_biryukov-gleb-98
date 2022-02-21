@@ -38,10 +38,8 @@ export default {
 
   methods: {
     handleSubmit(e) {
-      if (this.$route.query.from == '/register') {
-        console.log(123, this.$route.query.from);
+      if (this.$route.query.from) {
         this.$router.push({ path: this.$route.query.from });
-        // this.$router.push({ name: 'loginForm', query: { from: this.$route.query.from } });
       } else {
         return this.$router.push({ name: 'index' });
       }

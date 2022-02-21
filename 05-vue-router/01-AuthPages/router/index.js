@@ -21,11 +21,6 @@ export const router = createRouter({
       // component: PageLogin,
     },
     {
-      path: '/login:(?from(\\w+)',
-      name: 'loginForm',
-      component: () => import('../components/UiFormGroup'),
-    },
-    {
       path: '/register',
       name: 'register',
       component: () => import('../views/PageRegister'),
