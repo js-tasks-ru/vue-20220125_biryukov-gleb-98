@@ -1,6 +1,6 @@
 <template>
   <div class="toasts">
-    <ui-toast :message="message" />
+    <ui-toasts :messages="message" />
     <!-- <div v-if:="success" class="toast toast_success">
       <ui-icon class="toast__icon" icon="check-circle" />
       <span>Success Toast Example</span>
@@ -14,10 +14,10 @@
 </template>
 
 <script>
-import UiToast from './UiToast';
+import UiToasts from './UiToasts';
 export default {
   name: 'TheToaster',
-  components: { UiToast },
+  components: { UiToasts },
   data() {
     return {
       message: [],

@@ -1,5 +1,5 @@
 <template>
-  <div v-for="(toast, index) in message" :key="index" class="toast" :class="`${toast.class}`">
+  <div v-for="(toast, index) in messages" :key="index" class="toast" :class="`${toast.class}`">
     <ui-icon class="toast__icon" :icon="toast.icon" />
     <span>{{ toast.message }}</span>
   </div>
@@ -9,17 +9,11 @@
 import UiIcon from './UiIcon';
 
 export default {
-  name: 'UiToast',
+  name: 'UiToasts',
 
   components: { UiIcon },
 
-  props: ['message'],
-
-  watch: {
-    message() {
-      return this.message;
-    },
-  },
+  props: ['messages'],
 };
 </script>
 

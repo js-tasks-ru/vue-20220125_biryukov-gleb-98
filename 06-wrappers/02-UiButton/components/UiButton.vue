@@ -33,22 +33,13 @@ export default {
         secondary: 'button_secondary',
         danger: 'button_danger',
       },
-      actualButton: 'button_secondary',
+      // actualButton: 'button_secondary',
     };
   },
 
-  watch: {
-    variant: {
-      immediate: true,
-      handler() {
-        return this.actualClass();
-      },
-    },
-  },
-
-  methods: {
-    actualClass() {
-      return (this.actualButton = this.classButton[this.variant]);
+  computed: {
+    actualButton() {
+      return this.classButton[this.variant];
     },
   },
 };

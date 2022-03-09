@@ -1,15 +1,20 @@
 <template>
   <div class="dropdown" :class="{ dropdown_opened: activeDropdown }">
-    <template v-if="selectTitle == null">
+    <template v-if="actualOption == null">
       <button type="button" class="dropdown__toggle dropdown__toggle_icon" @click="toggleDropdown">
         <ui-icon icon="tv" class="dropdown__icon" />
         <span>{{ title }}</span>
       </button>
     </template>
     <template v-else>
-      <button type="button" class="dropdown__toggle" :class="{ dropdown__toggle_icon: isIcon }" @click="toggleDropdown">
-        <ui-icon v-if="selectTitle.icon" :icon="selectTitle.icon" class="dropdown__icon" />
-        <span>{{ selectTitle.text }}</span>
+      <button
+        type="button"
+        class="dropdown__toggle"
+        :class="{ dropdown__toggle_icon: findIcon }"
+        @click="toggleDropdown"
+      >
+        <ui-icon v-if="actualOption.icon" :icon="actualOption.icon" class="dropdown__icon" />
+        <span>{{ actualOption.text }}</span>
       </button>
     </template>
 
@@ -18,11 +23,11 @@
         v-for="(option, index) in options"
         :key="`${option.key}-${index}`"
         class="dropdown__item"
-        :class="{ dropdown__item_icon: isIcon }"
+        :class="{ dropdown__item_icon: findIcon }"
         role="option"
         type="button"
         :value="option.value"
-        @click="select($event.target.value, index)"
+        @click="select($event.target.value)"
       >
         <ui-icon v-if="option.icon" :icon="option.icon" class="dropdown__icon" />
         {{ option.text }}
@@ -56,19 +61,20 @@ export default {
   data() {
     return {
       activeDropdown: false,
-      isIcon: this.options.some((option) => {
-        return option.icon;
-      }),
-      selectTitle: null,
     };
   },
 
-  watch: {
-    modelValue: {
-      immediate: true,
-      handler() {
-        this.selectetOption();
-      },
+  computed: {
+    findIcon() {
+      return this.options.some((option) => {
+        return option.icon;
+      });
+    },
+
+    actualOption() {
+      return this.options.find((option) => {
+        if (option.value === this.modelValue) return option;
+      });
     },
   },
 
@@ -80,13 +86,6 @@ export default {
     select(value) {
       this.activeDropdown = false;
       this.$emit('update:modelValue', value);
-      this.selectetOption();
-    },
-
-    selectetOption() {
-      this.options.map((option) => {
-        if (option.value === this.modelValue) return (this.selectTitle = option);
-      });
     },
   },
 };
