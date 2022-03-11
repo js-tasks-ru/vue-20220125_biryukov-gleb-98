@@ -1,7 +1,8 @@
 <template>
   <div class="sample container">
     <button type="button" @click="$refs['firstInput'].focus()">Focus first input</button>
-    <button type="button" @click="$refs['firstInput'].$refs['input'].focus()">Focus first input 2</button>
+    <button type="button" @click="$refs['firstInput'].$refs['input'].focus()">Focus first input 2</button> 
+    <!-- по рефу можно обращаться и через компонент -->
 
     <ui-form-group>
       <ui-input ref="firstInput" v-model="value" />
