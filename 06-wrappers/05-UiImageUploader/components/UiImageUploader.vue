@@ -1,15 +1,79 @@
 <template>
   <div class="image-uploader">
-    <label class="image-uploader__preview image-uploader__preview-loading" style="--bg-url: url('/link.jpeg')">
-      <span class="image-uploader__text">Загрузить изображение</span>
-      <input type="file" accept="image/*" class="image-uploader__input" />
+    <label class="image-uploader__preview image-uploader__preview-loading" :style="`--bg-url: url(${previewImage}) `">
+      <span class="image-uploader__text">{{ statePreview }}</span>
+      <input
+        ref="inputFile"
+        type="file"
+        accept="image/*"
+        v-bind="$attrs"
+        class="image-uploader__input"
+        @click="handleFile($event)"
+      />
     </label>
   </div>
 </template>
 
 <script>
+const States = {
+  IDLE: 'IDLE',
+  LOADING: 'LOADING',
+  SUCCESS: 'SUCCESS',
+};
+
 export default {
   name: 'UiImageUploader',
+  inheritAttrs: false,
+  States,
+
+  props: { preview: String, uploader: Function },
+
+  emits: ['remove', 'upload', 'select'],
+  data() {
+    return {
+      state: States.IDLE,
+      error: null,
+    };
+  },
+
+  computed: {
+    statePreview() {
+      return this.state === 'IDLE'
+        ? 'Загрузить изображение'
+        : this.state === 'LOADING'
+        ? 'Загрузка...'
+        : 'Удалить изображение';
+    },
+    previewImage() {
+      return this.preview;
+    },
+  },
+
+  methods: {
+    handleFile(event) {
+      if (this.state === States.SUCCESS) {
+        event.preventDefault();
+        this.state = States.IDLE;
+        return this.$emit('remove');
+      } else {
+        console.log(event)
+        let onChange = new Event('change');
+        this.$refs.inputFile.dispatchEvent(onChange);
+
+        this.state = States.LOADING;
+        const file = event.target.files[0];
+        this.uploader(file)
+          .then((file) => {
+            this.state = States.SUCCESS;
+            this.$emit('upload', file);
+          })
+          .catch((error) => {
+            this.state = States.IDLE;
+            this.error = error.message;
+          });
+      }
+    },
+  },
 };
 </script>
 
