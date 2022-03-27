@@ -8,7 +8,8 @@
         accept="image/*"
         v-bind="$attrs"
         class="image-uploader__input"
-        @click="handleFile($event)"
+        @handle="handleFile($event)"
+        @click="clickDelete($event)"
       />
     </label>
   </div>
@@ -51,27 +52,25 @@ export default {
 
   methods: {
     handleFile(event) {
+      this.state = States.LOADING;
+      const file = event.target.files[0];
+      this.uploader(file)
+        .then((file) => {
+          this.state = States.SUCCESS;
+          this.$emit('upload', file);
+        })
+        .catch((error) => {
+          this.state = States.IDLE;
+          this.error = error.message;
+        });
+    },
+    clickDelete(event) {
       if (this.state === States.SUCCESS) {
         event.preventDefault();
         this.state = States.IDLE;
-        return this.$emit('remove');
-      } else {
-        console.log(event)
-        let onChange = new Event('change');
-        this.$refs.inputFile.dispatchEvent(onChange);
-
-        this.state = States.LOADING;
-        const file = event.target.files[0];
-        this.uploader(file)
-          .then((file) => {
-            this.state = States.SUCCESS;
-            this.$emit('upload', file);
-          })
-          .catch((error) => {
-            this.state = States.IDLE;
-            this.error = error.message;
-          });
+        this.$emit('remove');
       }
+      return;
     },
   },
 };
