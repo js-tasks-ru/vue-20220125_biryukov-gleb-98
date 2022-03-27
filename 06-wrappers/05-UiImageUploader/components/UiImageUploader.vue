@@ -70,7 +70,6 @@ export default {
         this.state = States.IDLE;
         this.$emit('remove');
       }
-      return;
     },
   },
 };
