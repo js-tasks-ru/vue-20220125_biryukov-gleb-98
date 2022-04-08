@@ -1,15 +1,84 @@
 <template>
   <div class="image-uploader">
-    <label class="image-uploader__preview image-uploader__preview-loading" style="--bg-url: url('/link.jpeg')">
-      <span class="image-uploader__text">Загрузить изображение</span>
-      <input type="file" accept="image/*" class="image-uploader__input" />
+    <label
+      class="image-uploader__preview image-uploader__preview-loading"
+      :style="`--bg-url: url(${previewImage !== undefined ? previewImage : defaultPreview}) `"
+    >
+      <span class="image-uploader__text">{{ statePreview }}</span>
+      <input
+        ref="fileInput"
+        type="file"
+        accept="image/*"
+        v-bind="$attrs"
+        class="image-uploader__input"
+        @change="handleFile($event)"
+        @click="clickDelete($event)"
+      />
     </label>
   </div>
 </template>
 
 <script>
+const States = {
+  IDLE: 'IDLE',
+  LOADING: 'LOADING',
+  SUCCESS: 'SUCCESS',
+};
+
 export default {
   name: 'UiImageUploader',
+  inheritAttrs: false,
+  States,
+
+  props: { preview: String, uploader: Function },
+
+  emits: ['remove', 'upload', 'select', 'error'],
+  data() {
+    return {
+      state: States.IDLE,
+      error: null,
+      defaultPreview: 'https://course-vue.javascript.ru/api/images/1',
+    };
+  },
+
+  computed: {
+    statePreview() {
+      return this.state === 'IDLE'
+        ? 'Загрузить изображение'
+        : this.state === 'LOADING'
+        ? 'Загрузка...'
+        : 'Удалить изображение';
+    },
+    previewImage() {
+      return this.preview;
+    },
+  },
+
+  methods: {
+    handleFile(event) {
+      this.state = States.LOADING;
+      const file = event.target.files[0];
+      this.$emit('select', file);
+      this.uploader(file)
+        .then((file) => {
+          this.state = States.SUCCESS;
+          this.$emit('upload', file);
+        })
+        .catch((error) => {
+          this.state = States.IDLE;
+          this.$emit('error', error);
+        });
+    },
+
+    clickDelete(event) {
+      if (this.state === States.SUCCESS) {
+        event.preventDefault();
+        event.target.value = '';
+        this.$emit('remove');
+        this.state = States.IDLE;
+      }
+    },
+  },
 };
 </script>
 
