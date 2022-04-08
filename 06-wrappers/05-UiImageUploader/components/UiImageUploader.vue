@@ -1,14 +1,17 @@
 <template>
   <div class="image-uploader">
-    <label class="image-uploader__preview image-uploader__preview-loading" :style="`--bg-url: url(${previewImage}) `">
+    <label
+      class="image-uploader__preview image-uploader__preview-loading"
+      :style="`--bg-url: url(${previewImage !== undefined ? previewImage : defaultPreview}) `"
+    >
       <span class="image-uploader__text">{{ statePreview }}</span>
       <input
-        ref="inputFile"
+        ref="fileInput"
         type="file"
         accept="image/*"
         v-bind="$attrs"
         class="image-uploader__input"
-        @handle="handleFile($event)"
+        @change="handleFile($event)"
         @click="clickDelete($event)"
       />
     </label>
@@ -29,11 +32,12 @@ export default {
 
   props: { preview: String, uploader: Function },
 
-  emits: ['remove', 'upload', 'select'],
+  emits: ['remove', 'upload', 'select', 'error'],
   data() {
     return {
       state: States.IDLE,
       error: null,
+      defaultPreview: 'https://course-vue.javascript.ru/api/images/1',
     };
   },
 
@@ -54,6 +58,7 @@ export default {
     handleFile(event) {
       this.state = States.LOADING;
       const file = event.target.files[0];
+      this.$emit('select', file);
       this.uploader(file)
         .then((file) => {
           this.state = States.SUCCESS;
@@ -61,14 +66,16 @@ export default {
         })
         .catch((error) => {
           this.state = States.IDLE;
-          this.error = error.message;
+          this.$emit('error', error);
         });
     },
+
     clickDelete(event) {
       if (this.state === States.SUCCESS) {
         event.preventDefault();
-        this.state = States.IDLE;
+        event.target.value = '';
         this.$emit('remove');
+        this.state = States.IDLE;
       }
     },
   },
