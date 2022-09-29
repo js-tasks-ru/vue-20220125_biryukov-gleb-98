@@ -1,8 +1,9 @@
 <template>
   <div class="image-uploader">
     <label
-      class="image-uploader__preview image-uploader__preview-loading"
-      :style="`--bg-url: url(${previewImage !== undefined ? previewImage : defaultPreview}) `"
+      class="image-uploader__preview"
+      :class="{ 'image-uploader__preview-loading': state === 'LOADING' }"
+      :style="`--bg-url: url(${preview}) `"
     >
       <span class="image-uploader__text">{{ statePreview }}</span>
       <input
@@ -30,27 +31,28 @@ export default {
   inheritAttrs: false,
   States,
 
-  props: { preview: String, uploader: Function },
+  props: {
+    preview: {
+      type: String,
+      default: null,
+    },
+    uploader: Function,
+  },
+  emits: ['remove', 'select', 'upload', 'error'],
 
-  emits: ['remove', 'upload', 'select', 'error'],
   data() {
     return {
       state: States.IDLE,
-      error: null,
-      defaultPreview: 'https://course-vue.javascript.ru/api/images/1',
+      // error: null,
     };
   },
 
   computed: {
     statePreview() {
-      return this.state === 'IDLE'
-        ? 'Загрузить изображение'
-        : this.state === 'LOADING'
-        ? 'Загрузка...'
-        : 'Удалить изображение';
-    },
-    previewImage() {
-      return this.preview;
+      if (this.preview === null && this.state === 'IDLE') return 'Загрузить изображение';
+      if (this.state === 'LOADING') return 'Загрузка...';
+      if (this.preview !== null || this.state === 'SUCCESS') return 'Удалить изображение';
+      return null;
     },
   },
 
@@ -66,14 +68,17 @@ export default {
         })
         .catch((error) => {
           this.state = States.IDLE;
+          event.target.value = '';
+          this.$emit('remove');
           this.$emit('error', error);
         });
     },
 
     clickDelete(event) {
-      if (this.state === States.SUCCESS) {
+      if (this.state === States.SUCCESS || this.preview) {
         event.preventDefault();
         event.target.value = '';
+
         this.$emit('remove');
         this.state = States.IDLE;
       }

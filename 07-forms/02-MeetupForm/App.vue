@@ -60,5 +60,5 @@ export default {
 </script>
 
 <style>
-@import '@/assets/styles/_container.css';
+/* @import '@/assets/styles/_container.css'; */
 </style>
