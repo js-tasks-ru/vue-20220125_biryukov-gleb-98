@@ -3,7 +3,7 @@
     <label
       class="image-uploader__preview"
       :class="{ 'image-uploader__preview-loading': state === 'LOADING' }"
-      :style="`--bg-url: url(${preview}) `"
+      :style="`--bg-url: url(${previewComp}) `"
     >
       <span class="image-uploader__text">{{ statePreview }}</span>
       <input
@@ -43,42 +43,47 @@ export default {
   data() {
     return {
       state: States.IDLE,
-      // error: null,
+      previewComp: this.preview,
     };
   },
 
   computed: {
     statePreview() {
-      if (this.preview === null && this.state === 'IDLE') return 'Загрузить изображение';
+      if (this.previewComp === null && this.state === 'IDLE') return 'Загрузить изображение';
       if (this.state === 'LOADING') return 'Загрузка...';
-      if (this.preview !== null || this.state === 'SUCCESS') return 'Удалить изображение';
+      if (this.previewComp !== null || this.state === 'SUCCESS') return 'Удалить изображение';
       return null;
     },
   },
 
   methods: {
     handleFile(event) {
-      this.state = States.LOADING;
       const file = event.target.files[0];
       this.$emit('select', file);
-      this.uploader(file)
-        .then((file) => {
-          this.state = States.SUCCESS;
-          this.$emit('upload', file);
-        })
-        .catch((error) => {
-          this.state = States.IDLE;
-          event.target.value = '';
-          this.$emit('remove');
-          this.$emit('error', error);
-        });
+      if (!this.uploader) {
+        this.previewComp = URL.createObjectURL(file);
+      } else {
+        this.state = States.LOADING;
+        this.uploader(file)
+          .then((file) => {
+            this.state = States.SUCCESS;
+            this.previewComp = file.image;
+            this.$emit('upload', file);
+          })
+          .catch((error) => {
+            this.state = States.IDLE;
+            event.target.value = '';
+            this.$emit('remove');
+            this.$emit('error', error);
+          });
+      }
     },
 
     clickDelete(event) {
-      if (this.state === States.SUCCESS || this.preview) {
+      if (this.state === States.SUCCESS || this.previewComp) {
         event.preventDefault();
         event.target.value = '';
-
+        this.previewComp = null;
         this.$emit('remove');
         this.state = States.IDLE;
       }
