@@ -58,7 +58,7 @@ export default {
         return date.substring(0, 10);
       } else if (this.type === 'datetime-local') {
         return date.substring(0, 16);
-      } else if (this.time === 'time') {
+      } else if (this.type === 'time') {
         return this.$attrs['step'] && this.$attrs['step'] % 60 !== 0 ? date.substring(11, 19) : date.substring(11, 16);
       }
 
