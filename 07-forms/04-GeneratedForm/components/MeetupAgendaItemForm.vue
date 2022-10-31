@@ -1,32 +1,37 @@
 <template>
   <fieldset class="agenda-item-form">
-    <button type="button" class="agenda-item-form__remove-button">
+    <button type="button" class="agenda-item-form__remove-button" @click="$emit('remove')">
       <ui-icon icon="trash" />
     </button>
 
     <ui-form-group>
-      <ui-dropdown title="Тип" :options="$options.agendaItemTypeOptions" name="type" />
+      <ui-dropdown v-model="localAgenda.type" title="Тип" :options="$options.agendaItemTypeOptions" name="type" />
     </ui-form-group>
 
     <div class="agenda-item-form__row">
       <div class="agenda-item-form__col">
         <ui-form-group label="Начало">
-          <ui-input type="time" placeholder="00:00" name="startsAt" />
+          <ui-input v-model="localAgenda.startsAt" type="time" placeholder="00:00" name="startsAt" />
         </ui-form-group>
       </div>
       <div class="agenda-item-form__col">
         <ui-form-group label="Окончание">
-          <ui-input type="time" placeholder="00:00" name="endsAt" />
+          <ui-input v-model="localAgenda.endsAt" type="time" placeholder="00:00" name="endsAt" />
         </ui-form-group>
       </div>
     </div>
 
-    <ui-form-group label="Заголовок">
-      <ui-input name="title" />
+    <ui-form-group v-for="(value, key) in actualGroup" :key="key" :label="value.label">
+      {{ key }}
+      <component :is="value.component" v-model="localAgenda[key]" v-bind="value.props" />
+    </ui-form-group>
+
+    <!-- <ui-form-group label="Заголовок">
+      <ui-input v-model="localAgenda.title" name="title" />
     </ui-form-group>
     <ui-form-group label="Описание">
-      <ui-input multiline name="description" />
-    </ui-form-group>
+      <ui-input v-model="localAgenda.description" multiline name="description" />
+    </ui-form-group> -->
   </fieldset>
 </template>
 
@@ -34,7 +39,7 @@
 import UiIcon from './UiIcon';
 import UiFormGroup from './UiFormGroup';
 import UiInput from './UiInput';
-import UiDropdown from './UiDropdown';
+import UiDropdown from './UiDropdown.vue';
 
 const agendaItemTypeIcons = {
   registration: 'key',
@@ -163,6 +168,52 @@ export default {
     agendaItem: {
       type: Object,
       required: true,
+    },
+  },
+
+  emits: ['update:agendaItem', 'remove'],
+
+  data() {
+    return {
+      localAgenda: { ...this.agendaItem },
+    };
+  },
+
+  computed: {
+    actualGroup() {
+      return agendaItemFormSchemas[this.localAgenda.type];
+    },
+  },
+  watch: {
+    localAgenda: {
+      deep: true,
+      immediate: true,
+      handler(newValue) {
+        this.$emit('update:agendaItem', { ...newValue });
+      },
+    },
+
+    'localAgenda.startsAt'(newValue, oldValue) {
+      const timeToMin = (value) => {
+        const values = value.split(':').map((el) => parseInt(el, 10));
+        return values[0] * 60 + values[1];
+      };
+
+      const newTime = timeToMin(newValue);
+      const oldTime = timeToMin(oldValue);
+      const oldEndsAtMin = timeToMin(this.localAgenda.endsAt);
+
+      const diffTime = newTime - oldTime;
+      const newEndAtMin = (oldEndsAtMin + diffTime + 24 * 60) % (24 * 60);
+      const hours = Math.floor(newEndAtMin / 60)
+        .toString()
+        .padStart(2, '0');
+      const minutes = Math.floor(newEndAtMin % 60)
+        .toString()
+        .padStart(2, '0');
+
+      // console.log(newEndAtMin, hours, minutes);
+      this.localAgenda.endsAt = `${hours}:${minutes}`;
     },
   },
 };
