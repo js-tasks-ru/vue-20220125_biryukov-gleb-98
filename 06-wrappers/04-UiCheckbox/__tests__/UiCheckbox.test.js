@@ -1,5 +1,5 @@
 import { shallowMount } from '@vue/test-utils';
-import { nextTick, ref } from 'vue';
+import { nextTick, ref, reactive } from 'vue';
 const UiCheckbox = require(global.getSolutionPath('components/UiCheckbox.vue')).default;
 
 describe('wrappers/UiCheckbox', () => {
@@ -47,7 +47,7 @@ describe('wrappers/UiCheckbox', () => {
 
     it('UiCheckbox должен выводить установленный checkbox при добавлении value в массив значений', async () => {
       const values = ref([]);
-      const wrapper = shallowMount(UiCheckbox, { props: { modelValue: values }, attrs: { value } });
+      const wrapper = shallowMount(UiCheckbox, { props: reactive({ modelValue: values }), attrs: { value } });
       values.value.push(value);
       await nextTick();
       expect(wrapper.find('input').element.checked).toBeTruthy();
@@ -55,8 +55,24 @@ describe('wrappers/UiCheckbox', () => {
 
     it('UiCheckbox должен выводить неустановленный checkbox при удалении value из массива значений', async () => {
       const values = ref([value]);
-      const wrapper = shallowMount(UiCheckbox, { props: { modelValue: values }, attrs: { value } });
+      const wrapper = shallowMount(UiCheckbox, { props: reactive({ modelValue: values }), attrs: { value } });
       values.value.splice(0, 1);
+      await nextTick();
+      expect(wrapper.find('input').element.checked).toBeFalsy();
+    });
+
+    it('UiCheckbox должен выводить установленный checkbox при добавлении value в Set значений', async () => {
+      const values = ref(new Set());
+      const wrapper = shallowMount(UiCheckbox, { props: reactive({ modelValue: values }), attrs: { value } });
+      values.value.add(value);
+      await nextTick();
+      expect(wrapper.find('input').element.checked).toBeTruthy();
+    });
+
+    it('UiCheckbox должен выводить неустановленный checkbox при удалении value из Set-а значений', async () => {
+      const values = ref(new Set([value]));
+      const wrapper = shallowMount(UiCheckbox, { props: reactive({ modelValue: values }), attrs: { value } });
+      values.value.delete(value);
       await nextTick();
       expect(wrapper.find('input').element.checked).toBeFalsy();
     });
@@ -89,6 +105,22 @@ describe('wrappers/UiCheckbox', () => {
       await wrapper.find('input').setValue(false);
       expect(wrapper.emitted('update:modelValue')).toBeTruthy();
       expect(wrapper.emitted('update:modelValue')[0]).toEqual([['1', '2', '3']]);
+    });
+
+    it('UiCheckbox должен порождать событие обновления значения с обновлённым Set-ом значений новым значением при установке checkbox', async () => {
+      const values = new Set(['1', '2', '3']);
+      const wrapper = shallowMount(UiCheckbox, { props: { modelValue: values }, attrs: { value } });
+      await wrapper.find('input').setValue(true);
+      expect(wrapper.emitted('update:modelValue')).toBeTruthy();
+      expect(wrapper.emitted('update:modelValue')[0]).toEqual([new Set([...values, value])]);
+    });
+
+    it('UiCheckbox должен порождать событие обновления значения с обновлённым Set-ом значений без убранного значения при отмене checkbox', async () => {
+      const values = new Set(['1', '2', value, '3']);
+      const wrapper = shallowMount(UiCheckbox, { props: { modelValue: values }, attrs: { value } });
+      await wrapper.find('input').setValue(false);
+      expect(wrapper.emitted('update:modelValue')).toBeTruthy();
+      expect(wrapper.emitted('update:modelValue')[0]).toEqual([new Set(['1', '2', '3'])]);
     });
   });
 });
