@@ -38,7 +38,7 @@
         <ui-input v-model="localAgenda.speaker" name="speaker" />
       </ui-form-group>
       <ui-form-group label="Описание">
-        <ui-input multilinev-model="localAgenda.description" multiline name="description" />
+        <ui-input v-model="localAgenda.description" multiline name="description" />
       </ui-form-group>
       <ui-form-group label="Язык">
         <ui-dropdown

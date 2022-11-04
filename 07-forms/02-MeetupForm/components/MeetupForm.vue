@@ -35,7 +35,7 @@
         :key="agendaItem.id"
         v-model:agendaItem="localMeetup.agenda[index]"
         class="meetup-form__agenda-item"
-        @remove="removeAgendaItem"
+        @remove="removeAgendaItem(agendaItem.id)"
       />
 
       <div class="meetup-form__append">
