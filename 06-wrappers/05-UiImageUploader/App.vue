@@ -3,8 +3,11 @@
     <ui-image-uploader
       :preview="image"
       :uploader="uploadImage"
-      @remove="image = undefined"
+      name="input-file"
+      @remove="image = null"
       @upload="image = $event.image"
+      @select="$event"
+      @error="$event"
     />
   </div>
 </template>

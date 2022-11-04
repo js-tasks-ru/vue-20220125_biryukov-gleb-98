@@ -1,38 +1,60 @@
 <template>
   <fieldset class="agenda-item-form">
-    <button type="button" class="agenda-item-form__remove-button">
+    <button type="button" class="agenda-item-form__remove-button" @click="$emit('remove')">
       <ui-icon icon="trash" />
     </button>
 
     <ui-form-group>
-      <ui-dropdown title="Тип" :options="$options.agendaItemTypeOptions" name="type" />
+      <ui-dropdown v-model="localAgenda.type" title="Тип" :options="$options.agendaItemTypeOptions" name="type" />
     </ui-form-group>
 
     <div class="agenda-item-form__row">
       <div class="agenda-item-form__col">
         <ui-form-group label="Начало">
-          <ui-input type="time" placeholder="00:00" name="startsAt" />
+          <ui-input v-model="localAgenda.startsAt" type="time" placeholder="00:00" name="startsAt" />
         </ui-form-group>
       </div>
       <div class="agenda-item-form__col">
         <ui-form-group label="Окончание">
-          <ui-input type="time" placeholder="00:00" name="endsAt" />
+          <ui-input v-model="localAgenda.endsAt" type="time" placeholder="00:00" name="endsAt" />
         </ui-form-group>
       </div>
     </div>
 
-    <ui-form-group label="Тема">
-      <ui-input name="title" />
-    </ui-form-group>
-    <ui-form-group label="Докладчик">
-      <ui-input name="speaker" />
-    </ui-form-group>
-    <ui-form-group label="Описание">
-      <ui-input multiline name="description" />
-    </ui-form-group>
-    <ui-form-group label="Язык">
-      <ui-dropdown title="Язык" :options="$options.talkLanguageOptions" name="language" />
-    </ui-form-group>
+    <template v-if="localAgenda.type === 'other'">
+      <ui-form-group label="Заголовок">
+        <ui-input v-model="localAgenda.title" name="title" />
+      </ui-form-group>
+      <ui-form-group label="Описание">
+        <ui-input v-model="localAgenda.description" name="description" multiline />
+      </ui-form-group>
+    </template>
+
+    <template v-else-if="localAgenda.type === 'talk'">
+      <ui-form-group label="Тема">
+        <ui-input v-model="localAgenda.title" name="title" />
+      </ui-form-group>
+      <ui-form-group label="Докладчик">
+        <ui-input v-model="localAgenda.speaker" name="speaker" />
+      </ui-form-group>
+      <ui-form-group label="Описание">
+        <ui-input v-model="localAgenda.description" multiline name="description" />
+      </ui-form-group>
+      <ui-form-group label="Язык">
+        <ui-dropdown
+          v-model="localAgenda.language"
+          title="Язык"
+          name="language"
+          :options="$options.talkLanguageOptions"
+        />
+      </ui-form-group>
+    </template>
+
+    <template v-else>
+      <ui-form-group label="Нестандартный текст (необязательно)">
+        <ui-input v-model="localAgenda.title" name="title" />
+      </ui-form-group>
+    </template>
   </fieldset>
 </template>
 
@@ -88,6 +110,46 @@ export default {
     agendaItem: {
       type: Object,
       required: true,
+    },
+  },
+
+  emits: ['update:agendaItem', 'remove'],
+
+  data() {
+    return {
+      localAgenda: { ...this.agendaItem },
+    };
+  },
+  watch: {
+    localAgenda: {
+      deep: true,
+      immediate: true,
+      handler(newValue) {
+        this.$emit('update:agendaItem', { ...newValue });
+      },
+    },
+
+    'localAgenda.startsAt'(newValue, oldValue) {
+      const timeToMin = (value) => {
+        const values = value.split(':').map((el) => parseInt(el, 10));
+        return values[0] * 60 + values[1];
+      };
+
+      const newTime = timeToMin(newValue);
+      const oldTime = timeToMin(oldValue);
+      const oldEndsAtMin = timeToMin(this.localAgenda.endsAt);
+
+      const diffTime = newTime - oldTime;
+      const newEndAtMin = (oldEndsAtMin + diffTime + 24 * 60) % (24 * 60);
+      const hours = Math.floor(newEndAtMin / 60)
+        .toString()
+        .padStart(2, '0');
+      const minutes = Math.floor(newEndAtMin % 60)
+        .toString()
+        .padStart(2, '0');
+
+      // console.log(newEndAtMin, hours, minutes);
+      this.localAgenda.endsAt = `${hours}:${minutes}`;
     },
   },
 };
