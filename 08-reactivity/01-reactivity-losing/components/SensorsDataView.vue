@@ -6,6 +6,8 @@
 </template>
 
 <script>
+import { cloneDeep } from 'lodash-es';
+
 import { SensorsDataController } from '../services/SensorsDataController';
 import { SensorsDataStreamingService } from '../services/SensorsDataStreamingService';
 import SensorsDataRow from './SensorsDataRow';
@@ -24,8 +26,6 @@ export default {
   mounted() {
     this.sensorsDataController = new SensorsDataController(new SensorsDataStreamingService());
     this.sensorsDataController.addDataCallback(this.callback);
-
-    // Раз в секунду запрашиваем и выводим новые данные сенсоров
     setInterval(() => {
       this.sensorsDataController.getData();
     }, 1000);
@@ -38,10 +38,12 @@ export default {
 
   methods: {
     callback(data) {
-      this.setData(data);
+      // каждый раз приходит один и тот же мутироваший(!) объект, из-за этого вью не видит изменений.
+      this.setData(cloneDeep(data));
     },
 
     setData(sensors) {
+      // this.sensors не надо делать реактивым, в data() все уже и так реактивное.
       this.sensors = sensors;
     },
   },
